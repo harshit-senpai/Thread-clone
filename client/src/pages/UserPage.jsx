@@ -1,6 +1,10 @@
+import UserHeader from "../components/UserHeader"
+
 function UserPage() {
   return (
-    <div>UserPage</div>
+    <>
+        <UserHeader/>
+    </>
   )
 }
 
