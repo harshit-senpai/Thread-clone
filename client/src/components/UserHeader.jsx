@@ -104,7 +104,7 @@ function UserHeader() {
           pb={3}
           cursor={"pointer"}
         >
-          <Text>Threads</Text>
+          <Text>Replies</Text>
         </Flex>
       </Flex>
     </VStack>
