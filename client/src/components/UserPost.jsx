@@ -1,4 +1,4 @@
-import { Avatar, Box, Flex, Image, Text } from "@chakra-ui/react";
+import { Avatar, Box, Divider, Flex, Image, Text } from "@chakra-ui/react";
 import { BsThreeDots } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import ActionLogos from "./ActionLogos";
@@ -76,13 +76,14 @@ function UserPost() {
               123 replies
             </Text>
             <Box h={0.5} w={0.5} borderRadius={"full"} bg={"gray.light"}>
-              <Text color={"gray.light"} fontSize={"sm"}>
+            </Box>
+            <Text color={"gray.light"} fontSize={"sm"}>
                 456 likes
               </Text>
-            </Box>
           </Flex>
         </Flex>
       </Flex>
+      <Divider my={4} />
     </Link>
   );
 }

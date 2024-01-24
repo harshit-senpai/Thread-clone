@@ -1,13 +1,14 @@
-import UserHeader from "../components/UserHeader"
-import UserPost from "../components/UserPost"
+import UserHeader from "../components/UserHeader";
+import UserPost from "../components/UserPost";
 
 function UserPage() {
   return (
     <>
-        <UserHeader/>
-        <UserPost/>
+      <UserHeader />
+      <UserPost />
+      <UserPost />
     </>
-  )
+  );
 }
 
-export default UserPage
+export default UserPage;
