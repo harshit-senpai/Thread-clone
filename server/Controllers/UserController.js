@@ -77,12 +77,19 @@ export const SignIn = async (req, res) => {
 };
 
 export const signOut = (req, res) => {
-  res.cookie("jwt", "", {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
-  res.status(200).json({
-    status: "success",
-    message: "Logged Out SUccessfully",
-  });
+  try {
+    res.cookie("jwt", "", {
+      expires: new Date(Date.now() + 10 * 1000),
+      httpOnly: true,
+    });
+    res.status(200).json({
+      status: "success",
+      message: "Logged Out SUccessfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "Internal Server Error",
+      message: err.message,
+    });
+  }
 };
