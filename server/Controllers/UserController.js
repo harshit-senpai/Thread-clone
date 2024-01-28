@@ -101,13 +101,13 @@ export const followUser = async (req, res) => {
     const modifyUser = await User.findById(id);
     const loggedInUser = await User.findById(req.user._id);
 
-    if (id === req.user._id) {
+    if (id === req.user._id.toString()) {
       return res.status(400).json({
         status: "Bad request",
         message: "You cannot follow yourself",
       });
     }
-    
+
     console.log(`to be followed: ${id} who is following ${req.user._id}`);
 
     if (!modifyUser || !loggedInUser) {
@@ -141,3 +141,4 @@ export const followUser = async (req, res) => {
     });
   }
 };
+
