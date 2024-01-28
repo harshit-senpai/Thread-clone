@@ -196,3 +196,36 @@ export const createReply = async (req, res) => {
     });
   }
 };
+
+export const getFeed = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        status: "Failed",
+        message: "User not found",
+      });
+    }
+
+    const following = user.following;
+
+    const feed = await Post.find({ postedBy: { $in: following } }).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      status: "Success",
+      data: {
+        feed,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "Failed",
+      message: "Something went wrong",
+    });
+  }
+};
