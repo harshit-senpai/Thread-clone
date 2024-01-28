@@ -151,3 +151,48 @@ export const likeUnlike = async (req, res) => {
     });
   }
 };
+
+export const createReply = async (req, res) => {
+  try {
+    const { text } = req.body;
+    const userId = req.user._id;
+    const { id: postId } = req.params;
+    const username = req.user.username;
+    const profilePic = req.user.profilePic;
+
+    if (!text) {
+      return res.status(404).json({
+        status: "Failed",
+        message: "Please enter all fields",
+      });
+    }
+
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({
+        status: "Failed",
+        message: "Post not found",
+      });
+    }
+
+    const reply = { username, userId, text, profilePic };
+
+    post.replies.push(reply);
+
+    await post.save();
+
+    res.status(201).json({
+      status: "Success",
+      message: "Reply created Successfully",
+      data: {
+        post,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "Failed",
+      message: "Something went wrong",
+    });
+  }
+};

@@ -2,6 +2,7 @@ import express from "express";
 
 import {
   createPost,
+  createReply,
   deletePost,
   getPost,
   likeUnlike,
@@ -14,5 +15,6 @@ router.post("/createPost", protect, createPost);
 router.get("/:id", getPost);
 router.delete("/:id", protect, deletePost);
 router.post("/like/:id", protect, likeUnlike);
+router.post("/reply/:id", protect, createReply);
 
 export default router;
