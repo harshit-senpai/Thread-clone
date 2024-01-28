@@ -142,3 +142,49 @@ export const followUser = async (req, res) => {
   }
 };
 
+export const updateProfile = async (req, res) => {
+  const { name, username, currentPassword, newPassword, bio, profilePic } =
+    req.body;
+  const userId = req.user._id;
+  try {
+    const user = await User.findById(userId).select("+password");
+
+    if (req.params.id !== userId.toString()) {
+      return res.status(401).json({
+        status: "unauthorized",
+        message: "You are not authorized to update others profile",
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        status: "failed",
+        message: "user does not exist",
+      });
+    }
+
+    if (currentPassword && newPassword) {
+      if (!(await user.correctPassword(currentPassword, user.password))) {
+        return res.status(401).json({
+          status: "unauthorized",
+          message: "Password entered is incorrect",
+        });
+      }
+      user.password = newPassword;
+    }
+
+    user.name = name || user.name;
+    user.username = username || user.username;
+    user.bio = bio || user.bio;
+    user.profilePic = profilePic || user.profilePic;
+
+    user.save();
+
+    createSendToken(user, 200, res);
+  } catch (err) {
+    res.status(500).json({
+      status: "Internal Server Error",
+      message: err.message,
+    });
+  }
+};

@@ -1,6 +1,12 @@
 import express from "express";
 
-import { signUp, SignIn, signOut, followUser } from "../Controllers/UserController.js";
+import {
+  signUp,
+  SignIn,
+  signOut,
+  followUser,
+  updateProfile,
+} from "../Controllers/UserController.js";
 import { protect } from "../middlewares/protectedRoutes.js";
 
 const router = express.Router();
@@ -10,5 +16,6 @@ router.post("/signin", SignIn);
 router.post("/signout", signOut);
 
 router.post("/follow/:id", protect, followUser);
+router.post("/updateprofile/:id", protect, updateProfile);
 
 export default router;
