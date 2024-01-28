@@ -93,3 +93,51 @@ export const signOut = (req, res) => {
     });
   }
 };
+
+export const followUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const modifyUser = await User.findById(id);
+    const loggedInUser = await User.findById(req.user._id);
+
+    if (id === req.user._id) {
+      return res.status(400).json({
+        status: "Bad request",
+        message: "You cannot follow yourself",
+      });
+    }
+    
+    console.log(`to be followed: ${id} who is following ${req.user._id}`);
+
+    if (!modifyUser || !loggedInUser) {
+      return res.status(400).json({
+        status: "Failed",
+        message: "User does not exists",
+      });
+    }
+
+    const isFollowing = await loggedInUser.following.includes(id);
+
+    if (isFollowing) {
+      await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
+      await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
+      return res.status(200).json({
+        status: "Success",
+        message: "Unfollowed Successfully",
+      });
+    } else {
+      await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
+      await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
+      return res.status(200).json({
+        status: "Success",
+        message: "Followed Successfully",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Internal Server Error",
+      message: err.message,
+    });
+  }
+};

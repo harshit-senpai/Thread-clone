@@ -1,5 +1,6 @@
 import User from "./../schema/UserModel.js";
 import jwt from "jsonwebtoken";
+import { promisify } from "util";
 
 export const protect = async (req, res, next) => {
   let token;
