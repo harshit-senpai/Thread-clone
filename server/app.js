@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 
 import userRoutes from "./Routes/UserRoutes.js";
+import postRoutes from "./Routes/PostRoutes.js";
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/posts", postRoutes);
 
 export default app;
