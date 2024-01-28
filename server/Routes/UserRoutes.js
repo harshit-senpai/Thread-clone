@@ -6,6 +6,7 @@ import {
   signOut,
   followUser,
   updateProfile,
+  getUserProfile,
 } from "../Controllers/UserController.js";
 import { protect } from "../middlewares/protectedRoutes.js";
 
@@ -17,5 +18,7 @@ router.post("/signout", signOut);
 
 router.post("/follow/:id", protect, followUser);
 router.post("/updateprofile/:id", protect, updateProfile);
+
+router.get("/profile/:username", protect, getUserProfile);
 
 export default router;

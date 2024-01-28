@@ -188,3 +188,31 @@ export const updateProfile = async (req, res) => {
     });
   }
 };
+
+export const getUserProfile = async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ username: username }).select(
+      "-updatedAt"
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        status: "failed",
+        message: "user does not exist",
+      });
+    }
+
+    res.status(200).json({
+      status: "Success",
+      data: {
+        user,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "Internal Server Error",
+      message: err.message,
+    });
+  }
+};
