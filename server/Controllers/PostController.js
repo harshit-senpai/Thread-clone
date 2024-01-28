@@ -108,11 +108,46 @@ export const deletePost = async (req, res) => {
       status: "Success",
       message: "Post deleted successfully",
     });
-
   } catch (err) {
     res.status(400).json({
       status: "failed",
       message: err.message,
+    });
+  }
+};
+
+export const likeUnlike = async (req, res) => {
+  try {
+    const { id: postId } = req.params;
+    const userId = req.user._id;
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({
+        status: "Failed",
+        message: "Post not found",
+      });
+    }
+
+    const userLikedPost = post.likes.includes(userId);
+
+    if (userLikedPost) {
+      await post.updateOne({ $pull: { likes: userId } });
+      res.status(200).json({
+        status: "Success",
+        message: "Post unliked successfully",
+      });
+    } else {
+      await post.updateOne({ $push: { likes: userId } });
+      res.status(200).json({
+        status: "Success",
+        message: "Post liked successfully",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      status: "Failed",
+      message: "Something went wrong",
     });
   }
 };

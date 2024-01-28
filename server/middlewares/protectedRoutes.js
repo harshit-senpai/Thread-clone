@@ -15,7 +15,7 @@ export const protect = async (req, res, next) => {
   }
 
   if (!token) {
-    return res.statusCode(401).json({
+    return res.status(401).json({
       status: "Unauthorized",
       message: "You are not logged in to get access",
     });
