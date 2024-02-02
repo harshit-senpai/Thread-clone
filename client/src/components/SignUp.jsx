@@ -15,16 +15,20 @@ import {
   Text,
   useColorModeValue,
   Link,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useSetRecoilState } from "recoil";
 import authScreen from "../atoms/authAtom";
 import axios from "axios";
+import userAtom from "../atoms/suerAtom";
 
 export default function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
   const setAuthAtom = useSetRecoilState(authScreen);
+  const toast = useToast();
+  const setUser = useSetRecoilState(userAtom);
   const [inputs, setInputs] = useState({
     name: "",
     username: "",
@@ -38,9 +42,19 @@ export default function SignupCard() {
       .then(({ data }) => {
         console.log(data);
         localStorage.setItem("user-threads", JSON.stringify(data));
+        setUser(data);
       })
-      .catch((response) => {
-        console.log(response);
+      .catch((error) => {
+        console.log(error);
+        if (error.response.data.message) {
+          toast({
+            title: "Error",
+            description: error.response.data.message,
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
       });
   };
 
