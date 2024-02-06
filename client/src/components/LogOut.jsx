@@ -2,6 +2,7 @@ import { Button, useToast } from "@chakra-ui/react";
 import { useSetRecoilState } from "recoil";
 import userAtom from "../atoms/suerAtom";
 import axios from "axios";
+import { LuLogOut } from "react-icons/lu";
 
 const LogOut = () => {
   const toast = useToast();
@@ -36,7 +37,7 @@ const LogOut = () => {
       size={"sm"}
       onClick={handleLogOut}
     >
-      LogOut
+      <LuLogOut size={22}/>
     </Button>
   );
 };

@@ -1,30 +1,32 @@
 import User from "../schema/UserModel.js";
 import jwt from "jsonwebtoken";
+import { v2 as cloudinary } from "cloudinary";
 
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-};
+import generateTokenAndSetCookie from "../utils/generateToken.js";
 
-const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
-  const cookieOptions = {
-    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    httpOnly: true,
-    sameSite: "strict",
-  };
+// const signToken = (id) => {
+//   return jwt.sign({ id }, process.env.JWT_SECRET, {
+//     expiresIn: process.env.JWT_EXPIRES_IN,
+//   });
+// };
 
-  res.cookie("jwt", token, cookieOptions);
+// const createSendToken = (user, statusCode, res) => {
+//   const token = signToken(user._id);
+//   const cookieOptions = {
+//     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+//     httpOnly: true,
+//     sameSite: "strict",
+//   };
 
-  res.status(statusCode).json({
-    status: "Success",
-    token,
-    data: {
-      user,
-    },
-  });
-};
+//   res.cookie("jwt", token, cookieOptions);
+
+//   res.status(statusCode).json({
+//     token,
+//     data: {
+//       user,
+//     },
+//   });
+// };
 
 export const signUp = async (req, res) => {
   try {
@@ -45,7 +47,18 @@ export const signUp = async (req, res) => {
       password: password,
     });
 
-    createSendToken(newUser, 201, res);
+    if (newUser) {
+      generateTokenAndSetCookie(newUser._id, res);
+
+      res.status(201).json({
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        username: newUser.username,
+        bio: newUser.bio,
+        profilePic: newUser.profilePic,
+      });
+    }
   } catch (err) {
     res.status(500).json({
       status: "Internal Server Error",
@@ -73,7 +86,16 @@ export const SignIn = async (req, res) => {
     });
   }
 
-  createSendToken(user, 200, res);
+  generateTokenAndSetCookie(user._id, res);
+
+  res.status(200).json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    username: user.username,
+    bio: user.bio,
+    profilePic: user.profilePic,
+  });
 };
 
 export const signOut = (req, res) => {
@@ -143,8 +165,8 @@ export const followUser = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-  const { name, username, currentPassword, newPassword, bio, profilePic } =
-    req.body;
+  const { name, username, bio, email } = req.body;
+  let { profilePic } = req.body;
   const userId = req.user._id;
   try {
     const user = await User.findById(userId).select("+password");
@@ -163,24 +185,28 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    if (currentPassword && newPassword) {
-      if (!(await user.correctPassword(currentPassword, user.password))) {
-        return res.status(401).json({
-          status: "unauthorized",
-          message: "Password entered is incorrect",
-        });
+    if (profilePic) {
+      if (user.profilePic) {
+        await cloudinary.uploader.destroy(
+          user.profilePic.split("/").pop().split(".")[0]
+        );
       }
-      user.password = newPassword;
+      const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+      profilePic = uploadedResponse.secure_url;
     }
 
     user.name = name || user.name;
     user.username = username || user.username;
     user.bio = bio || user.bio;
+    user.email = email || user.email;
     user.profilePic = profilePic || user.profilePic;
 
     user.save();
 
-    createSendToken(user, 200, res);
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user,
+    });
   } catch (err) {
     res.status(500).json({
       status: "Internal Server Error",

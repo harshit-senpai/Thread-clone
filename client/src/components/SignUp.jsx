@@ -38,7 +38,9 @@ export default function SignupCard() {
 
   const handleSignUp = async () => {
     await axios
-      .post("http://localhost:3000/api/v1/users/signup", inputs)
+      .post("http://localhost:3000/api/v1/users/signup", inputs, {
+        withCredentials: true,
+      })
       .then(({ data }) => {
         console.log(data);
         localStorage.setItem("user-threads", JSON.stringify(data));

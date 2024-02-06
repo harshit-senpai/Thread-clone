@@ -34,7 +34,9 @@ export default function SignInCard() {
   const setUser = useSetRecoilState(userAtom);
   const handleLogin = async () => {
     await axios
-      .post("http://localhost:3000/api/v1/users/signin", inputs)
+      .post("http://localhost:3000/api/v1/users/signin", inputs, {
+        withCredentials: true,
+      })
       .then(({ data }) => {
         console.log(data);
         localStorage.setItem("user-threads", JSON.stringify(data));

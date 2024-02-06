@@ -8,15 +8,15 @@ import {
   getPost,
   likeUnlike,
 } from "./../Controllers/PostController.js";
-import { protect } from "./../middlewares/protectedRoutes.js";
+import protectedRoutes from "./../middlewares/protectedRoutes.js";
 
 const router = express.Router();
 
-router.post("/feed", protect, getFeed);
-router.post("/createPost", protect, createPost);
+router.post("/feed", protectedRoutes, getFeed);
+router.post("/createPost", protectedRoutes, createPost);
 router.get("/:id", getPost);
-router.delete("/:id", protect, deletePost);
-router.post("/like/:id", protect, likeUnlike);
-router.post("/reply/:id", protect, createReply);
+router.delete("/:id", protectedRoutes, deletePost);
+router.post("/like/:id", protectedRoutes, likeUnlike);
+router.post("/reply/:id", protectedRoutes, createReply);
 
 export default router;

@@ -8,7 +8,7 @@ import {
   updateProfile,
   getUserProfile,
 } from "../Controllers/UserController.js";
-import { protect } from "../middlewares/protectedRoutes.js";
+import protectedRoutes  from "./../middlewares/protectedRoutes.js";
 
 const router = express.Router();
 
@@ -16,9 +16,9 @@ router.post("/signup", signUp);
 router.post("/signin", SignIn);
 router.post("/signout", signOut);
 
-router.post("/follow/:id", protect, followUser);
-router.post("/updateprofile/:id", protect, updateProfile);
+router.post("/follow/:id", protectedRoutes, followUser);
+router.put("/updateprofile/:id", protectedRoutes, updateProfile);
 
-router.get("/profile/:username", protect, getUserProfile);
+router.get("/profile/:username", protectedRoutes, getUserProfile);
 
 export default router;
