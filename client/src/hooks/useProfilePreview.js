@@ -24,7 +24,6 @@ const useProfilePreview = () => {
       });
     }
   };
-  console.log(imgUrl);
   return { handleImageChange, imgUrl };
 };
 

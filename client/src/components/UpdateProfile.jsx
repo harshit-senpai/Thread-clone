@@ -17,24 +17,26 @@ import { useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import userAtom from "../atoms/suerAtom";
 import useImagePreview from "./../hooks/useProfilePreview";
-import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function UserProfileEdit() {
   const toast = useToast();
   const [user, setUser] = useRecoilState(userAtom);
+  console.log(user);
   const [input, setInput] = useState({
     name: user.name,
     username: user.username,
     email: user.email,
     bio: user.bio,
   });
+  const [updating, setUpdating] = useState(false);
   const fileRef = useRef(null);
-  const data = JSON.stringify(localStorage.getItem("user-threads"));
-  console.log(data);
   const { handleImageChange, imgUrl } = useImagePreview();
-  console.log(input);
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (updating) return;
+
+    setUpdating(true);
     try {
       const res = await fetch(
         `http://localhost:3000/api/v1/users/updateprofile/${user._id}`,
@@ -50,8 +52,27 @@ export default function UserProfileEdit() {
 
       const data = await res.json();
       console.log(data);
+      if (data.error) {
+        toast({
+          title: "Error",
+          description: data.error.response.data.message,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      toast({
+        title: "Success",
+        description: "Profile Updated Successfully",
+        duration: 3000,
+        isClosable: true,
+      });
+      setUser(data);
+      localStorage.setItem("user-threads", JSON.stringify(data));
     } catch (error) {
       console.log(error);
+    } finally {
+      setUpdating(false);
     }
   };
   return (
@@ -150,6 +171,7 @@ export default function UserProfileEdit() {
                 bg: "green.500",
               }}
               type="submit"
+              isLoading={updating}
             >
               Submit
             </Button>

@@ -4,30 +4,6 @@ import { v2 as cloudinary } from "cloudinary";
 
 import generateTokenAndSetCookie from "../utils/generateToken.js";
 
-// const signToken = (id) => {
-//   return jwt.sign({ id }, process.env.JWT_SECRET, {
-//     expiresIn: process.env.JWT_EXPIRES_IN,
-//   });
-// };
-
-// const createSendToken = (user, statusCode, res) => {
-//   const token = signToken(user._id);
-//   const cookieOptions = {
-//     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-//     httpOnly: true,
-//     sameSite: "strict",
-//   };
-
-//   res.cookie("jwt", token, cookieOptions);
-
-//   res.status(statusCode).json({
-//     token,
-//     data: {
-//       user,
-//     },
-//   });
-// };
-
 export const signUp = async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
@@ -204,8 +180,12 @@ export const updateProfile = async (req, res) => {
     user.save();
 
     res.status(200).json({
-      message: "Profile updated successfully",
-      user,
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      username: user.username,
+      bio: user.bio,
+      profilePic: user.profilePic,
     });
   } catch (err) {
     res.status(500).json({
